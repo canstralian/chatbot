@@ -73,16 +73,27 @@ try:
     @st.cache_resource
     def load_model(model_name):
         try:
-            return pipeline("text-generation", model=model_name, trust_remote_code=True, device=-1)  # Force CPU
+            # Add specific configurations for text generation
+            return pipeline(
+                "text-generation",
+                model=model_name,
+                trust_remote_code=True,
+                device=-1,  # Force CPU
+                model_kwargs={"low_cpu_mem_usage": True}
+            )
         except Exception as e:
             st.error(f"Failed to load model: {str(e)}")
             return None
     
-    with st.spinner("Loading model..."):
+    with st.spinner(f"Loading {model_name}..."):
         generator = load_model(model_name)
-        st.success("Model loaded successfully!")
+        if generator is not None:
+            st.success(f"Model {model_name} loaded successfully!")
+        else:
+            st.error("Failed to load model. Please try selecting a different model.")
+            st.stop()
 except Exception as e:
-    st.error(f"Error loading model: {str(e)}")
+    st.error(f"Error initializing model pipeline: {str(e)}")
     st.stop()
 
 # Initialize session state
