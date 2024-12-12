@@ -1,19 +1,27 @@
-# 💬 Chatbot template
 
-A simple Streamlit app that shows how to build a chatbot using OpenAI's GPT-3.5.
+# 💬 Chatbot
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://chatbot-template.streamlit.app/)
+A simple Streamlit app that demonstrates a chatbot using Hugging Face's text generation models.
 
-### How to run it on your own machine
+### Features
+- Choose from different Hugging Face models (gpt2, distilgpt2, EleutherAI/gpt-neo-125M)
+- Interactive chat interface
+- Message history persistence
 
-1. Install the requirements
+### How to use
+1. Select a model from the dropdown menu
+2. Type your message in the chat input
+3. The chatbot will generate and display a response
 
+### Getting Started
+1. Install the required packages:
    ```
-   $ pip install -r requirements.txt
+   pip install -r requirements.txt
    ```
 
-2. Run the app
+2. Run the app:
+   ```
+   streamlit run streamlit_app.py
+   ```
 
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+The app will be accessible through your web browser.
