@@ -7,3 +7,7 @@ channel = "stable-24_05"
 
 [deployment]
 run = ["sh", "-c", "streamlit run streamlit_app.py"]
+
+[[ports]]
+localPort = 8501
+externalPort = 80
