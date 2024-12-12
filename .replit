@@ -1,0 +1,9 @@
+
+modules = ["python-3.12"]
+run = "streamlit run streamlit_app.py"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "streamlit run streamlit_app.py"]
