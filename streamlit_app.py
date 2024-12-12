@@ -59,8 +59,7 @@ def load_model(model_name):
             "text-generation",
             model=model_name,
             trust_remote_code=True,
-            device=-1,
-            model_kwargs={"low_cpu_mem_usage": True}
+            device=-1
         )
     except Exception as e:
         st.error(f"Failed to load model: {str(e)}")
