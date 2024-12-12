@@ -59,7 +59,8 @@ def load_model(model_name):
             "text-generation",
             model=model_name,
             trust_remote_code=True,
-            device=-1
+            device=-1,
+            model_kwargs={"low_memory": True}
         )
     except Exception as e:
         st.error(f"Failed to load model: {str(e)}")
@@ -128,4 +129,9 @@ def main():
         st.stop()
 
 if __name__ == "__main__":
-    main()
+    try:
+        st.server.address = "0.0.0.0"
+        st.server.port = 8501
+        main()
+    except Exception as e:
+        st.error(f"Application error: {str(e)}")
