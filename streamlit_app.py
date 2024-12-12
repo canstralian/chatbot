@@ -29,9 +29,20 @@ with st.sidebar:
     if dataset_source:
         try:
             with st.spinner("Loading dataset..."):
-                dataset = load_dataset(dataset_source)
-                st.success(f"Dataset loaded successfully!")
-                st.write(f"Available splits: {', '.join(dataset.keys())}")
+                # Use streaming for large datasets
+                dataset = load_dataset(
+                    dataset_source,
+                    streaming=True,
+                    split="train"
+                )
+                # Take a small sample
+                sample_size = 1000
+                dataset = dataset.take(sample_size)
+                st.success(f"Dataset loaded successfully! (Sample size: {sample_size})")
+                
+                # Show a preview of the first few examples
+                preview = list(dataset.take(3))
+                st.write("Preview of dataset:", preview)
         except Exception as e:
             st.error(f"Error loading dataset: {str(e)}")
 
