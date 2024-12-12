@@ -16,7 +16,7 @@ with st.sidebar:
     st.title("🛠️ Configuration")
     model_name = st.selectbox(
         "Select Model:",
-        ["replit/replit-code-v1_5-3b", "gpt2", "distilgpt2", "EleutherAI/gpt-neo-125M"],
+        ["distilgpt2", "gpt2", "EleutherAI/gpt-neo-125M"],
         help="Choose the model for text generation"
     )
     
@@ -72,7 +72,11 @@ st.write(
 try:
     @st.cache_resource
     def load_model(model_name):
-        return pipeline("text-generation", model=model_name, trust_remote_code=True)
+        try:
+            return pipeline("text-generation", model=model_name, trust_remote_code=True, device=-1)  # Force CPU
+        except Exception as e:
+            st.error(f"Failed to load model: {str(e)}")
+            return None
     
     with st.spinner("Loading model..."):
         generator = load_model(model_name)
