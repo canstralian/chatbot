@@ -60,7 +60,7 @@ def load_model(model_name):
             model=model_name,
             trust_remote_code=True,
             device=-1,
-            model_kwargs={"low_memory": True}
+            low_cpu_mem_usage=True
         )
     except Exception as e:
         st.error(f"Failed to load model: {str(e)}")
