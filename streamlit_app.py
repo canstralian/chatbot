@@ -130,8 +130,6 @@ def main():
 
 if __name__ == "__main__":
     try:
-        st.server.address = "0.0.0.0"
-        st.server.port = 8501
         main()
     except Exception as e:
         st.error(f"Application error: {str(e)}")
