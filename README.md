@@ -1,5 +1,9 @@
-
 # 💬 Chatbot
+
+[![CI](https://github.com/canstralian/chatbot/actions/workflows/tests.yml/badge.svg)](https://github.com/canstralian/chatbot/actions/workflows/tests.yml)
+[![Linting](https://github.com/canstralian/chatbot/actions/workflows/linting.yml/badge.svg)](https://github.com/canstralian/chatbot/actions/workflows/linting.yml)
+[![Deployment](https://github.com/canstralian/chatbot/actions/workflows/cd.yml/badge.svg)](https://github.com/canstralian/chatbot/actions/workflows/cd.yml)
+[![Security](https://github.com/canstralian/chatbot/actions/workflows/security.yml/badge.svg)](https://github.com/canstralian/chatbot/actions/workflows/security.yml)
 
 A simple Streamlit app that demonstrates a chatbot using Hugging Face's text generation models.
 
