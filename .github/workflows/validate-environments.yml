@@ -1,0 +1,15 @@
+name: Environment Validation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Validate staging environment
+      run: curl -s -o /dev/null -w "%{http_code}" https://staging.example.com || exit 1
+
+    - name: Validate production environment
+      run: curl -s -o /dev/null -w "%{http_code}" https://production.example.com || exit 1
