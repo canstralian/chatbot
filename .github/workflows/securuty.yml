@@ -1,0 +1,27 @@
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: "0 3 * * *" # Runs daily at 3 AM UTC
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Trivy
+      uses: aquasecurity/trivy-action@v0.11.0
+
+    - name: Run vulnerability scan
+      uses: aquasecurity/trivy-action@v0.11.0
+      with:
+        scan-type: "fs"
+        ignore-unfixed: true
+        format: "table"
