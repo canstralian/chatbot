@@ -1,0 +1,21 @@
+name: Performance Testing
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install locust
+      run: pip install locust
+
+    - name: Run performance test
+      run: locust --headless --users 50 --spawn-rate 10 -H http://your-api-url.com
