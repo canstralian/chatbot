@@ -1,0 +1,17 @@
+name: License Compliance
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-licenses:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install license-checker
+      run: npm install -g license-checker
+
+    - name: Run license check
+      run: license-checker --production --json > licenses.json
