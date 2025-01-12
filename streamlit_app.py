@@ -1,7 +1,12 @@
-
 import streamlit as st
 from transformers import pipeline
 from datasets import load_dataset
+
+# Initialize session state variables
+if 'messages' not in st.session_state:
+    st.session_state.messages = []
+if 'dataset' not in st.session_state:
+    st.session_state.dataset = None
 
 def init_page_config():
     """Initialize Streamlit page configuration."""
@@ -34,7 +39,7 @@ def load_dataset_config():
     """Handle dataset loading and configuration."""
     st.subheader("Dataset Configuration")
     dataset_source = st.text_input(
-        "Enter Dataset (e.g. 'microsoft/DialogStudio' or URL):",
+        "Enter Dataset (e.g., 'microsoft/DialogStudio' or URL):",
         help="Enter a Hugging Face dataset name or URL"
     )
     
@@ -46,8 +51,9 @@ def load_dataset_config():
                     streaming=True,
                     split="train"
                 ).take(1000)
+                st.session_state.dataset = list(dataset)
                 st.success("Dataset loaded successfully! (Sample size: 1000)")
-                st.write("Preview of dataset:", list(dataset.take(3)))
+                st.write("Preview of dataset:", st.session_state.dataset[:3])
         except Exception as e:
             st.error(f"Error loading dataset: {str(e)}")
 
@@ -94,8 +100,12 @@ def handle_chat_interaction(generator):
             st.markdown(prompt)
 
         with st.spinner("Thinking..."):
-            response = generator(prompt, max_length=150, num_return_sequences=1)
-            assistant_response = response[0]['generated_text']
+            try:
+                response = generator(prompt, max_length=150, num_return_sequences=1)
+                assistant_response = response[0]['generated_text']
+            except Exception as e:
+                st.error(f"Error generating response: {str(e)}")
+                return
 
         with st.chat_message("assistant"):
             st.markdown(assistant_response)
@@ -110,26 +120,13 @@ def main():
     init_page_config()
     model_name = setup_sidebar()
     
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-    
     setup_chat_interface()
     
-    try:
-        with st.spinner(f"Loading {model_name}..."):
-            generator = load_model(model_name)
-            if generator is not None:
-                st.success(f"Model {model_name} loaded successfully!")
-                handle_chat_interaction(generator)
-            else:
-                st.error("Failed to load model. Please try selecting a different model.")
-                st.stop()
-    except Exception as e:
-        st.error(f"Error initializing model pipeline: {str(e)}")
-        st.stop()
+    generator = load_model(model_name)
+    if generator:
+        handle_chat_interaction(generator)
+    else:
+        st.error("Failed to load model. Please try selecting a different model.")
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        st.error(f"Application error: {str(e)}")
+    main()
