@@ -1,0 +1,21 @@
+name: Artifact Management
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-store:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Build project
+      run: python setup.py build
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: dist/
