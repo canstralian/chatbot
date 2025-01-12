@@ -4,9 +4,9 @@ from datasets import load_dataset
 
 # Initialize session state variables
 if 'messages' not in st.session_state:
-    st.session_state.messages = []
+    st.session_state['messages'] = []
 if 'dataset' not in st.session_state:
-    st.session_state.dataset = None
+    st.session_state['dataset'] = None
 
 def init_page_config():
     """Initialize Streamlit page configuration."""
@@ -22,7 +22,7 @@ def setup_sidebar():
         st.title("🛠️ Configuration")
         model_name = st.selectbox(
             "Select Model:",
-            ["distilgpt2", "gpt2", "EleutherAI/gpt-neo-125M"],
+            ("distilgpt2", "gpt2", "EleutherAI/gpt-neo-125M"),
             help="Choose the model for text generation"
         )
         
@@ -30,7 +30,7 @@ def setup_sidebar():
         
         # Clear chat button
         if st.button("Clear Chat"):
-            st.session_state.messages = []
+            st.session_state['messages'] = []
             st.experimental_rerun()
             
         return model_name
@@ -51,15 +51,23 @@ def load_dataset_config():
                     streaming=True,
                     split="train"
                 ).take(1000)
-                st.session_state.dataset = list(dataset)
+                st.session_state['dataset'] = list(dataset)
                 st.success("Dataset loaded successfully! (Sample size: 1000)")
-                st.write("Preview of dataset:", st.session_state.dataset[:3])
+                st.write("Preview of dataset:", st.session_state['dataset'][:3])
         except Exception as e:
-            st.error(f"Error loading dataset: {str(e)}")
+            st.error(f"Error loading dataset: {e}")
 
 @st.cache_resource
-def load_model(model_name):
-    """Load and cache the language model."""
+def load_model(model_name: str):
+    """
+    Load and cache the language model.
+
+    Args:
+        model_name (str): The name of the model to load.
+
+    Returns:
+        transformers.pipelines.Pipeline: The loaded text-generation pipeline.
+    """
     try:
         return pipeline(
             "text-generation",
@@ -69,7 +77,7 @@ def load_model(model_name):
             low_cpu_mem_usage=True
         )
     except Exception as e:
-        st.error(f"Failed to load model: {str(e)}")
+        st.error(f"Failed to load model: {e}")
         return None
 
 def setup_chat_interface():
@@ -83,19 +91,21 @@ def setup_chat_interface():
         </style>
     """, unsafe_allow_html=True)
     
-    st.write("This chatbot uses Hugging Face's models for text generation. "
-             "You can customize the experience by selecting different models and datasets.")
+    st.write(
+        "This chatbot uses Hugging Face's models for text generation. "
+        "You can customize the experience by selecting different models and datasets."
+    )
 
 def handle_chat_interaction(generator):
     """Handle chat messages and responses."""
     chat_container = st.container()
     with chat_container:
-        for message in st.session_state.messages:
+        for message in st.session_state['messages']:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
     if prompt := st.chat_input("Type your message here..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.session_state['messages'].append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
@@ -104,13 +114,13 @@ def handle_chat_interaction(generator):
                 response = generator(prompt, max_length=150, num_return_sequences=1)
                 assistant_response = response[0]['generated_text']
             except Exception as e:
-                st.error(f"Error generating response: {str(e)}")
+                st.error(f"Error generating response: {e}")
                 return
 
         with st.chat_message("assistant"):
             st.markdown(assistant_response)
 
-        st.session_state.messages.append({
+        st.session_state['messages'].append({
             "role": "assistant",
             "content": assistant_response
         })
