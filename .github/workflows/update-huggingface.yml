@@ -13,18 +13,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the repository
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
+    # Step 2: Set up Python
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.x'
+        python-version: '3.10'  # Use a specific version for consistency
 
+    # Step 3: Cache dependencies to improve performance
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # Step 4: Install dependencies
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
 
+    # Step 5: Run the Hugging Face update script
     - name: Run update script
       env:
         HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
       run: python scripts/update_huggingface.py
+
+    # Step 6: Optional - Lint the codebase to ensure quality (optional but recommended)
+    - name: Run linter (flake8)
+      run: |
+        pip install flake8
+        flake8 .
