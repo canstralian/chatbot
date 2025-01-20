@@ -15,9 +15,20 @@ jobs:
       uses: github/codeql-action/init@v2
       with:
         languages: python
+        queries: +security-and-quality
 
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Build dependencies (if applicable)
+      run: |
+        pip install -r requirements.txt
+
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+      with:
+        upload: true
+
+    - name: Notify critical issues
+      if: ${{ steps.analyze.outputs.alert-count > 0 }}
+      run: echo "Critical vulnerabilities detected in CodeQL analysis."
