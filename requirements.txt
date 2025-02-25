@@ -5,3 +5,5 @@ torch
 scipy
 datasets
 accelerate>=0.26.0
+pytest
+black
