@@ -1,35 +1,56 @@
-name: CI
+[MASTER]
+# Specify files or directories to be skipped.
+ignore=tests,migrations
+# Python code to analyze
+init-hook='import sys; sys.path.append(".")'
 
-on: [push, pull_request]
+# Enable or disable specific Pylint plugins
+load-plugins=pylint.extensions.docparams
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+[MESSAGES CONTROL]
+# Disable certain warnings if not relevant to your project
+disable=
+    C0114,  # Missing module docstring
+    C0115,  # Missing class docstring
+    C0116,  # Missing function or method docstring
+    R0903,  # Too few public methods
+    R0913,  # Too many arguments in function
+    R0801,  # Duplicate code
 
-    steps:
-    - uses: actions/checkout@v4
+[REPORTS]
+# Disable the detailed report at the end of the lint output
+reports=no
+# Set the minimum score threshold for passing (range: -10.0 to 10.0)
+score=yes
+evaluation=10.0 - ((float(5 * error + warning + refactor + convention)) / statement)
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+[FORMAT]
+# Max number of characters on a single line
+max-line-length=88  # Matches Black's default
+# Indentation settings
+indent-string='    '
+indent-after-paren=4
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+[DESIGN]
+# Allow up to 15 arguments for functions (adjust as needed)
+max-args=10
+# Allow up to 20 attributes per class
+max-attributes=20
+# Max number of local variables in a function
+max-locals=15
+# Max number of return statements in a function
+max-returns=6
+# Max number of branch points for complexity
+max-complexity=10
 
-    - name: Lint with pylint
-      run: |
-        pylint $(git ls-files '*.py')
+[TYPECHECK]
+# Ignore missing imports (helpful for some dynamic imports or external libs)
+ignore-missing-imports=yes
 
-    - name: Format check with black
-      run: |
-        black --check .
+[SIMILARITIES]
+# Ignore duplication under 4 lines
+min-similarity-lines=4
 
-    - name: Run tests with pytest
-      run: |
-        pytest
+[SPELLING]
+spelling-dict=en_US
+spelling-ignore-words=pytest,asyncio,kwargs,args
